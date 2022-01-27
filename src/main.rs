@@ -1,9 +1,20 @@
-use esp_idf_sys as _; // If using the `binstart` feature of `esp-idf-sys`, always keep this module imported
+mod wifi;
+
+use esp_idf_sys::{self as _}; // If using the `binstart` feature of `esp-idf-sys`, always keep this module imported
+use std::time::Duration;
 
 fn main() {
-    // Temporary. Will disappear once ESP-IDF 4.4 is released, but for now it is necessary to call this function once,
-    // or else some patches to the runtime implemented by esp-idf-sys might not link properly.
     esp_idf_sys::link_patches();
 
-    println!("Hello, world!");
+    println!("Bricc booted, starting wifi");
+
+    #[allow(unused)]
+    let mut wifi_manager = wifi::WifiManager::init();
+    wifi_manager
+        .set_ap_wpa2_psk("bricc".into(), "showscreen".into())
+        .unwrap();
+    loop {
+        println!("Sitting around doing nothing.");
+        std::thread::sleep(Duration::from_secs(10));
+    }
 }
